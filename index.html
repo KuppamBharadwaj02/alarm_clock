@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #2c3e50, #2980b9);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .alarmClockContainer {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.6);
+            width: 45%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            padding-bottom: 20px;
+            text-shadow: 0px 0px 10px cyan, 0px 0px 20px cyan, 0px 0px 40px cyan, 0px 0px 80px cyan;
+        }
+
+        #currentTimeDisplay {
+            font-size: 3em;
+            font-weight: bold;
+            padding: 20px 40px;
+            border-radius: 10px;
+            background-color: #333;
+            color: cyan;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        #currentTimeDisplay:hover {
+            text-shadow: 0px 0px 10px rgb(12, 114, 114), 0px 0px 20px rgb(58, 177, 177), 0px 0px 40px cyan, 0px 0px 80px cyan;
+        }
+
+        input[type="number"],
+        input[type="date"],
+        select {
+            padding: 12px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 10px cyan;
+        }
+
+        .actionButtons {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+
+        span {
+            color: cyan;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #alarmSetTime {
+            color: cyan;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .alarmClockContainer {
+                width: 80%;
+                padding: 20px;
+            }
+
+            #currentTimeDisplay {
+                font-size: 2em;
+                padding: 15px 30px;
+            }
+
+            input[type="number"],
+            input[type="date"],
+            select {
+                width: 100%;
+                font-size: 14px;
+                margin: 8px 0;
+            }
+
+            button {
+                width: 100%;
+                font-size: 14px;
+                padding: 12px 0;
+            }
+
+            .actionButtons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                padding-bottom: 10px;
+            }
+
+            #currentTimeDisplay {
+                font-size: 2em;
+            }
+
+            .alarmClockContainer {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="alarmSound" src="ringtone.wav" preload="auto"> </audio>
+    <div class="alarmClockContainer">
+        <h1><u>Alarm Clock</u></h1>
+        <div>
+            <div id="currentTimeDisplay"></div>
+        </div>
+        <div>
+            <input type="date">
+        </div>
+        <div>
+            <input type="number" onblur="fun(this)" placeholder="HH" min="1" max="12">
+            <input type="number" onblur="fun(this)" placeholder="MM" min="00" max="59">
+            <select id="amPmSelector">
+                <option value="" selected disabled>AM or PM</option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        <div class="actionButtons">
+            <button onclick="set()">Set</button>
+            <button onclick="stop()">Stop</button>
+        </div>
+        <div>Alarm is set for: <span id="alarmSetTime"></span></div>
+    </div>
+
+    <script>
+        let currentTimeDisplay = document.getElementById("currentTimeDisplay");
+        let alarmSetTime = document.getElementById("alarmSetTime");
+        let alarmSound = document.getElementById("alarmSound");
+        let amPmSelector = document.getElementById("amPmSelector");
+        let inputs = document.getElementsByTagName("input");
+
+        function fun(input) {
+            if (input.value.length === 1) {
+                input.value = '0' + input.value;
+            }
+        }
+
+        function clock() {
+            let t = new Date();
+            let date = t.toLocaleDateString('en-CA');
+            let t1 = t.getHours() % 12 || 12;
+            let t2 = t.getMinutes();
+            t1 = t1 < 10 ? "0" + t1 : t1;
+            t2 = t2 < 10 ? "0" + t2 : t2;
+
+            currentTimeDisplay.innerHTML = t.toLocaleTimeString();
+
+            let time = t1 + ":" + t2 + " " + (t.getHours() >= 12 ? "PM" : "AM");
+            let time1 = inputs[1].value + ":" + inputs[2].value + " " + amPmSelector.value;
+
+            if (time == time1 && inputs[0].value == date) {
+                alarmSound.play();
+                alarmSound.volume = 0.5;
+            }
+        }
+
+        setInterval(clock, 1000);
+
+        function set() {
+            let h = inputs[1].value;
+            let m = inputs[2].value;
+            let ap = amPmSelector.value;
+            alarmSound.src = "ringtone.wav";
+            if (h == "" || m == "" || ap == "") {
+                alert("Please fill in all values");
+                return;
+            }
+
+            let al = h + ':' + m + ' ' + ap;
+            alarmSetTime.innerHTML = inputs[0].value + " at " + al;
+        }
+
+        function stop() {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            alarmSound.src = "";
+        }
+    </script>
+</body>
+
+</html>
