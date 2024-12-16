@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Clock</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <audio id="alarmSound" src="ringtone.wav" preload="auto"> </audio>
+    <div class="alarmClockContainer">
+        <h1><u>Alarm Clock</u></h1>
+        <div>
+            <div id="currentTimeDisplay"></div>
+        </div>
+        <div>
+            <input type="date">
+        </div>
+        <div>
+            <input type="number" onblur="fun(this)" placeholder="HH" min="1" max="12">
+            <input type="number" onblur="fun(this)" placeholder="MM" min="00" max="59">
+            <select id="amPmSelector">
+                <option value="" selected disabled>AM or PM</option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        <div class="actionButtons">
+            <button onclick="set()">Set</button>
+            <button onclick="stop()">Stop</button>
+        </div>
+        <div>Alarm is set for: <span id="alarmSetTime"></span></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
